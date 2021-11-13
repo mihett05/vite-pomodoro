@@ -1,15 +1,12 @@
-import React from 'react'
-import '../styles/App.css'
+import React from 'react';
+import Layout from './Layout';
 
 function App() {
-
   return (
-    <div className="App">
-      <div className="App-header">
-        Pomodoro clock
-      </div>
-    </div>
-  )
+    <Layout>
+      <h1>Pomodoro</h1>
+    </Layout>
+  );
 }
 
-export default App
+export default App;
