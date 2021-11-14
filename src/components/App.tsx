@@ -1,21 +1,24 @@
 import React from 'react';
-import { Heading, Box, Flex, Center, Button, IconButton } from '@chakra-ui/react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Layout from './Layout';
 import AuthProvider from './AuthProvider';
-import Pomodoro from './Pomodoro';
+import HomePage from '../pages/home';
+import SessionPage from '../pages/sessionPage';
 
 function App() {
   return (
     <AuthProvider>
-      <Layout>
-        <Flex>
-          <Pomodoro />
-          <Box>
-            <Heading>Session</Heading>
-          </Box>
-        </Flex>
-      </Layout>
+      <BrowserRouter>
+        <Layout>
+          <Routes>
+            <Route path="/">
+              <Route index element={<HomePage />} />
+              <Route path="session/:userId" element={<SessionPage />} />
+            </Route>
+          </Routes>
+        </Layout>
+      </BrowserRouter>
     </AuthProvider>
   );
 }

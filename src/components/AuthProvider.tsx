@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react';
-import { User } from 'firebase/auth';
+import { User, signInAnonymously } from 'firebase/auth';
 
 import { auth } from '../firebase';
 
@@ -14,9 +14,13 @@ function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      setCurrentUser(currentUser);
-      setIsLoading(false);
+    return auth.onAuthStateChanged((user) => {
+      if (user === null) {
+        signInAnonymously(auth);
+      } else {
+        setCurrentUser(user);
+        setIsLoading(false);
+      }
     });
   });
 
