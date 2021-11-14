@@ -13,7 +13,7 @@ export interface Session {
   endTime: number;
 }
 
-type SessionChanges = {
+export type SessionChanges = {
   [k in keyof Session]?: Session[k];
 };
 

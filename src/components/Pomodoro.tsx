@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router';
 import {
   Box,
   Center,
   CircularProgress,
   CircularProgressLabel,
   Flex,
+  FormControl,
+  FormLabel,
   Heading,
   IconButton,
   Spacer,
+  Tooltip,
+  Switch,
+  Text,
 } from '@chakra-ui/react';
 import { RepeatClockIcon } from '@chakra-ui/icons';
 import { FaPause, FaPlay } from 'react-icons/fa';
-import { Session, editSession } from '../db';
+import { Session, editSession, SessionChanges } from '../db';
 import TimeInput from './TimeInput';
 
 interface PomodoroProps {
@@ -24,25 +28,55 @@ function Pomodoro({ session, isOwner }: PomodoroProps) {
   const { isPaused, lastTime, endTime, state, sessionLength, breakLength } = session;
   const [clientLastTime, setClientLastTime] = useState(lastTime);
 
+  const remainingTime = Math.floor((endTime - clientLastTime) / 1000);
+  const minutes = Math.floor(remainingTime / 60);
+  const seconds = remainingTime - minutes * 60;
+  const formattedDate = [minutes, seconds].map((v) => (v < 10 ? `0${v}` : v)).join(':');
+
   useEffect(() => {
     if (isOwner) {
       editSession({
         isOnline: true,
       });
-    }
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      // on page leave
-      if (isOwner) {
+      return () => {
+        // on page leave
         editSession({
           isPaused: true,
           isOnline: false,
         });
-      }
-    };
+      };
+    }
   }, []);
+
+  useEffect(() => {
+    setClientLastTime(lastTime);
+    if (!isPaused) {
+      const interval = setInterval(() => {
+        setClientLastTime(new Date().getTime());
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [isPaused, lastTime]);
+
+  useEffect(() => {
+    if (isOwner) {
+      if (remainingTime <= 0) {
+        const newState = state === 'session' ? 'break' : 'session';
+        editSession({
+          state: newState,
+          lastTime: new Date().getTime(),
+          endTime: new Date().getTime() + (newState === 'session' ? sessionLength : breakLength) * 60 * 1000,
+        });
+      }
+    }
+  }, [remainingTime]);
+
+  const getResetData = (endLength: number): SessionChanges => ({
+    isPaused: true,
+    lastTime: new Date().getTime(),
+    endTime: new Date().getTime() + endLength * 60 * 1000,
+    state: 'session',
+  });
 
   const onTogglePause = () => {
     if (isOwner) {
@@ -61,52 +95,19 @@ function Pomodoro({ session, isOwner }: PomodoroProps) {
     }
   };
 
-  const onReset = () =>
-    editSession({
-      isPaused: true,
-      lastTime: new Date().getTime(),
-      endTime: new Date().getTime() + sessionLength * 60 * 1000,
-      state: 'session',
-    });
+  const onReset = () => editSession(getResetData(sessionLength));
 
   const onEditSessionLength = (value: number) =>
     editSession({
       sessionLength: value,
+      ...getResetData(value),
     });
 
   const onEditBreakLength = (value: number) =>
     editSession({
       breakLength: value,
+      ...getResetData(sessionLength),
     });
-
-  useEffect(() => {
-    setClientLastTime(lastTime);
-    if (!isPaused) {
-      const interval = setInterval(() => {
-        setClientLastTime(new Date().getTime());
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [isPaused, lastTime]);
-
-  const remainingTime = Math.floor((endTime - clientLastTime) / 1000);
-
-  useEffect(() => {
-    if (isOwner) {
-      if (remainingTime <= 0) {
-        const newState = state === 'session' ? 'break' : 'session';
-        editSession({
-          state: newState,
-          lastTime: new Date().getTime(),
-          endTime: new Date().getTime() + (newState === 'session' ? sessionLength : breakLength) * 60 * 1000,
-        });
-      }
-    }
-  }, [remainingTime]);
-
-  const minutes = Math.floor(remainingTime / 60);
-  const seconds = remainingTime - minutes * 60;
-  const formattedDate = [minutes, seconds].map((v) => (v < 10 ? `0${v}` : v)).join(':');
 
   return (
     <Box
@@ -131,16 +132,29 @@ function Pomodoro({ session, isOwner }: PomodoroProps) {
       </Center>
       <Center>
         <Flex>
-          <IconButton
-            aria-label="Pause/Resume"
-            icon={isPaused ? <FaPlay /> : <FaPause />}
-            onClick={onTogglePause}
-            isDisabled={!isOwner}
-            mr="4"
-          />
-          <IconButton aria-label="Reset" icon={<RepeatClockIcon />} onClick={onReset} isDisabled={!isOwner} />
+          <Tooltip label={isPaused ? 'Resume' : 'Paused'}>
+            <IconButton
+              aria-label="Pause/Resume"
+              icon={isPaused ? <FaPlay /> : <FaPause />}
+              onClick={onTogglePause}
+              isDisabled={!isOwner}
+              mr="4"
+            />
+          </Tooltip>
+          <Tooltip label="Reset">
+            <IconButton aria-label="Reset" icon={<RepeatClockIcon />} onClick={onReset} isDisabled={!isOwner} />
+          </Tooltip>
         </Flex>
       </Center>
+
+      <Tooltip label="A long break session of 10 minutes. This will be activated every 4th break session.">
+        <Center>
+          <Flex direction="column">
+            <Text>Long break</Text>
+            <Switch />
+          </Flex>
+        </Center>
+      </Tooltip>
       <Flex>
         <TimeInput
           name="Session length(min)"
