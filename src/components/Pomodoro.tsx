@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router';
 import {
   Box,
   Center,
@@ -22,6 +23,19 @@ interface PomodoroProps {
 function Pomodoro({ session, isOwner }: PomodoroProps) {
   const { isPaused, lastTime, endTime, state, sessionLength, breakLength } = session;
   const [clientLastTime, setClientLastTime] = useState(lastTime);
+
+  useEffect(() => {
+    return () => {
+      // on page leave
+      if (!isPaused) {
+        editSession({
+          isPaused: true,
+          lastTime: new Date().getTime(),
+        });
+      }
+    };
+  }, [isPaused]);
+
   const onTogglePause = () => {
     if (isPaused) {
       return editSession({
@@ -96,6 +110,7 @@ function Pomodoro({ session, isOwner }: PomodoroProps) {
         <CircularProgress
           value={(1 - remainingTime / ((state === 'session' ? sessionLength : breakLength) * 60)) * 100}
           size="4em"
+          color={state === 'session' ? 'cyan.400' : 'teal.400'}
         >
           <CircularProgressLabel>
             <Heading>{formattedDate}</Heading>

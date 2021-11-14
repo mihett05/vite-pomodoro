@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { onValue, query, ref } from 'firebase/database';
+import { onValue, query, ref, onDisconnect } from 'firebase/database';
 
 import { db, auth } from '../firebase';
 import { Session } from '../db';
@@ -19,6 +19,24 @@ function SessionPage() {
       });
     }
   }, [userId]);
+
+  useEffect(() => {
+    if (session) {
+      const onDisconnectSession = onDisconnect(ref(db, `sessions/${userId}`));
+      let changes = {
+        isPaused: true,
+        lastTime: new Date().getTime(),
+      };
+      onDisconnectSession.update({
+        ...(!session.isPaused ? changes : {}),
+        isPaused: true,
+        isOnline: false,
+      });
+      return () => {
+        onDisconnectSession.cancel();
+      };
+    }
+  }, [session]);
 
   if (isLoading) {
     return <>Loading</>;
