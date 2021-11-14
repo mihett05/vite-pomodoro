@@ -7,6 +7,7 @@ export interface Session {
   breakLength: number;
   hasLongBreak: true;
   isPaused: boolean;
+  isOnline: boolean;
   state: 'session' | 'break';
   lastTime: number; // time since start of timer(resume or real start)
   endTime: number;
@@ -40,6 +41,7 @@ export const createSession = async () => {
       breakLength: 5,
       hasLongBreak: true,
       isPaused: true,
+      isOnline: false,
       state: 'session',
       lastTime: new Date().getTime(),
       endTime: new Date().getTime() + 25 * 60 * 1000,

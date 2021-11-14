@@ -25,29 +25,39 @@ function Pomodoro({ session, isOwner }: PomodoroProps) {
   const [clientLastTime, setClientLastTime] = useState(lastTime);
 
   useEffect(() => {
+    if (isOwner) {
+      editSession({
+        isOnline: true,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
     return () => {
       // on page leave
-      if (!isPaused) {
+      if (isOwner) {
         editSession({
+          isPaused: true,
+          isOnline: false,
+        });
+      }
+    };
+  }, []);
+
+  const onTogglePause = () => {
+    if (isOwner) {
+      if (isPaused) {
+        return editSession({
+          isPaused: false,
+          endTime: endTime + (new Date().getTime() - lastTime), // adding the time of the pause to the end time
+          lastTime: new Date().getTime(),
+        });
+      } else {
+        return editSession({
           isPaused: true,
           lastTime: new Date().getTime(),
         });
       }
-    };
-  }, [isPaused]);
-
-  const onTogglePause = () => {
-    if (isPaused) {
-      return editSession({
-        isPaused: false,
-        endTime: endTime + (new Date().getTime() - lastTime), // adding the time of the pause to the end time
-        lastTime: new Date().getTime(),
-      });
-    } else {
-      return editSession({
-        isPaused: true,
-        lastTime: new Date().getTime(),
-      });
     }
   };
 
@@ -82,13 +92,15 @@ function Pomodoro({ session, isOwner }: PomodoroProps) {
   const remainingTime = Math.floor((endTime - clientLastTime) / 1000);
 
   useEffect(() => {
-    if (remainingTime <= 0) {
-      const newState = state === 'session' ? 'break' : 'session';
-      editSession({
-        state: newState,
-        lastTime: new Date().getTime(),
-        endTime: new Date().getTime() + (newState === 'session' ? sessionLength : breakLength) * 60 * 1000,
-      });
+    if (isOwner) {
+      if (remainingTime <= 0) {
+        const newState = state === 'session' ? 'break' : 'session';
+        editSession({
+          state: newState,
+          lastTime: new Date().getTime(),
+          endTime: new Date().getTime() + (newState === 'session' ? sessionLength : breakLength) * 60 * 1000,
+        });
+      }
     }
   }, [remainingTime]);
 

@@ -21,7 +21,7 @@ function SessionPage() {
   }, [userId]);
 
   useEffect(() => {
-    if (session) {
+    if (session && userId && userId === auth.currentUser?.uid) {
       const onDisconnectSession = onDisconnect(ref(db, `sessions/${userId}`));
       let changes = {
         isPaused: true,
