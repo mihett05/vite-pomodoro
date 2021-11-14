@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { onValue, query, ref } from 'firebase/database';
-import { Editable, EditableInput, EditablePreview } from '@chakra-ui/react';
+import { Editable, EditableInput, EditablePreview, useEditableControls } from '@chakra-ui/react';
+import { EditIcon } from '@chakra-ui/icons';
 import { auth, db } from '../firebase';
 import { generateUserName, setUserName } from '../db';
+
+function EditableButton() {
+  const { isEditing, getEditButtonProps } = useEditableControls();
+
+  return <>{!isEditing && <EditIcon {...getEditButtonProps()} />}</>;
+}
 
 function NameEditable() {
   const [name, setName] = useState('Name');
@@ -23,10 +30,13 @@ function NameEditable() {
   };
 
   return (
-    <Editable value={name} onChange={onEditName} placeholder="<Your name>">
-      <EditablePreview />
-      <EditableInput />
-    </Editable>
+    <>
+      <Editable value={name} onChange={onEditName} placeholder="<Your name>">
+        <EditablePreview mr="0.5" />
+        <EditableInput />
+        <EditableButton />
+      </Editable>
+    </>
   );
 }
 
