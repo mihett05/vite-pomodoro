@@ -16,7 +16,7 @@ function Header() {
         </Link>
         <Spacer />
         <Box p="2">
-          <Link to={`/session/${auth.currentUser?.uid}`}>
+          <Link to={`/sessions/${auth.currentUser?.uid}`}>
             <Button>My session</Button>
           </Link>
         </Box>

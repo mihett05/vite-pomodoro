@@ -34,10 +34,14 @@ function SessionCard({ uid, name, session }: SessionCardProps) {
                 <Button>Join</Button>
               </Link>
             </Box>
-            <Spacer />
-            <Center>
-              <Tag h="4">{session.hasLongBreak && 'Long break'}</Tag>
-            </Center>
+            {session.hasLongBreak && (
+              <>
+                <Spacer />
+                <Center>
+                  <Tag h="4">Long Break</Tag>
+                </Center>
+              </>
+            )}
           </Flex>
         </Box>
       </Flex>

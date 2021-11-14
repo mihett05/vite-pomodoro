@@ -161,18 +161,6 @@ function Pomodoro({ session, isOwner }: PomodoroProps) {
         </Flex>
       </Center>
 
-      <Tooltip label="A long break session of x2 of break time. This will be activated every 4th break session.">
-        <Center>
-          <Flex direction="column">
-            <Center>
-              <Text>Long break</Text>
-            </Center>
-            <Center>
-              <Switch isDisabled={!isOwner} isChecked={hasLongBreak} onChange={toggleLongBreak} />
-            </Center>
-          </Flex>
-        </Center>
-      </Tooltip>
       <Flex>
         <TimeInput
           name="Session length(min)"
@@ -180,6 +168,19 @@ function Pomodoro({ session, isOwner }: PomodoroProps) {
           onChange={onEditSessionLength}
           isDisabled={!isOwner}
         />
+        <Spacer />
+        <Tooltip label="A long break session of x2 of break time. This will be activated every 4th break session.">
+          <Center>
+            <Flex direction="column">
+              <Center>
+                <Text>Long break</Text>
+              </Center>
+              <Center>
+                <Switch isDisabled={!isOwner} isChecked={hasLongBreak} onChange={toggleLongBreak} />
+              </Center>
+            </Flex>
+          </Center>
+        </Tooltip>
         <Spacer />
         <TimeInput name="Break length(min)" value={breakLength} onChange={onEditBreakLength} isDisabled={!isOwner} />
       </Flex>

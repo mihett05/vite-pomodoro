@@ -9,7 +9,19 @@ function HomePage() {
   const [sessions, setSessions] = useState<Sessions>({});
   const [users, setUsers] = useState<Users>({});
 
-  const activeSessions = useMemo(() => Object.keys(sessions).filter((uid) => sessions[uid].isOnline), [sessions]);
+  const activeSessions = useMemo(
+    () =>
+      Object.keys(sessions)
+        .filter((uid) => sessions[uid].isOnline)
+        .sort((a, b) => {
+          const sessionA = sessions[a].endTime;
+          const sessionB = sessions[b].endTime;
+          if (sessionA < sessionB) return 1;
+          else if (sessionA === sessionB) return 0;
+          else return -1;
+        }),
+    [sessions],
+  );
 
   useEffect(() => {
     return onValue(query(ref(db, `sessions`)), (data) => {
