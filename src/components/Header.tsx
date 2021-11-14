@@ -1,22 +1,11 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Center,
-  Container,
-  Editable,
-  EditableInput,
-  EditablePreview,
-  Flex,
-  Heading,
-  Spacer,
-} from '@chakra-ui/react';
+import React from 'react';
+import { Box, Button, Center, Container, Flex, Heading, Spacer } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+
+import { auth } from '../firebase';
 import NameEditable from './NameEditable';
 
 function Header() {
-  const [name, setName] = useState('Name');
-
   return (
     <Container maxW="container.xl">
       <Flex>
@@ -27,7 +16,9 @@ function Header() {
         </Link>
         <Spacer />
         <Box p="2">
-          <Button>Create session</Button>
+          <Link to={`/session/${auth.currentUser?.uid}`}>
+            <Button>My session</Button>
+          </Link>
         </Box>
         <Center pl="2">
           <NameEditable />

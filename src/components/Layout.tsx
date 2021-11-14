@@ -10,7 +10,7 @@ function Layout({ children }: LayoutProps) {
   return (
     <>
       <Header />
-      <Center h="100vh">{children}</Center>
+      <Center h="90vh">{children}</Center>
     </>
   );
 }

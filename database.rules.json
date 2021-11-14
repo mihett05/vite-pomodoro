@@ -8,6 +8,12 @@
         ".write": "$user === auth.uid",
         ".validate": "newData.isString() && newData.val().length < 32"
       }
+    },
+    "sessions": {
+      ".read": true,
+      "$session": {
+        ".write": "$session === auth.uid"
+      }
     }
   }
 }
