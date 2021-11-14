@@ -14,6 +14,10 @@ export interface Session {
   breaks: number;
 }
 
+export type Sessions = Record<string, Session>;
+
+export type Users = Record<string, string>;
+
 export type SessionChanges = {
   [k in keyof Session]?: Session[k];
 };

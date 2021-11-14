@@ -14,7 +14,7 @@ function App() {
           <Routes>
             <Route path="/">
               <Route index element={<HomePage />} />
-              <Route path="session/:userId" element={<SessionPage />} />
+              <Route path="sessions/:userId" element={<SessionPage />} />
             </Route>
           </Routes>
         </Layout>

@@ -133,7 +133,7 @@ function Pomodoro({ session, isOwner }: PomodoroProps) {
           value={
             (1 -
               remainingTime /
-                ((state === 'session' ? sessionLength : hasLongBreak ? 2 * breakLength : breakLength) * 60)) *
+                ((state === 'session' ? sessionLength : isLongBreak ? 2 * breakLength : breakLength) * 60)) *
             100
           }
           size="4em"

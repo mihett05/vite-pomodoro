@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { onValue, query, ref, onDisconnect } from 'firebase/database';
+import { Center } from '@chakra-ui/react';
 
 import { db, auth } from '../firebase';
 import { Session } from '../db';
@@ -48,7 +49,11 @@ function SessionPage() {
 
   const isOwner = auth.currentUser?.uid === userId;
 
-  return <Pomodoro session={session} isOwner={isOwner} />;
+  return (
+    <Center h="90vh">
+      <Pomodoro session={session} isOwner={isOwner} />
+    </Center>
+  );
 }
 
 export default SessionPage;
