@@ -5,12 +5,13 @@ import { adjectives, colors, starWars, uniqueNamesGenerator } from 'unique-names
 export interface Session {
   sessionLength: number;
   breakLength: number;
-  hasLongBreak: true;
+  hasLongBreak: boolean;
   isPaused: boolean;
   isOnline: boolean;
   state: 'session' | 'break';
   lastTime: number; // time since start of timer(resume or real start)
   endTime: number;
+  breaks: number;
 }
 
 export type SessionChanges = {
@@ -45,6 +46,7 @@ export const createSession = async () => {
       state: 'session',
       lastTime: new Date().getTime(),
       endTime: new Date().getTime() + 25 * 60 * 1000,
+      breaks: 0,
     } as Session);
   }
 };

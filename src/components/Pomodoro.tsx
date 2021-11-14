@@ -5,8 +5,6 @@ import {
   CircularProgress,
   CircularProgressLabel,
   Flex,
-  FormControl,
-  FormLabel,
   Heading,
   IconButton,
   Spacer,
@@ -25,13 +23,14 @@ interface PomodoroProps {
 }
 
 function Pomodoro({ session, isOwner }: PomodoroProps) {
-  const { isPaused, lastTime, endTime, state, sessionLength, breakLength } = session;
+  const { isPaused, lastTime, endTime, state, sessionLength, breakLength, hasLongBreak, breaks } = session;
   const [clientLastTime, setClientLastTime] = useState(lastTime);
 
   const remainingTime = Math.floor((endTime - clientLastTime) / 1000);
   const minutes = Math.floor(remainingTime / 60);
   const seconds = remainingTime - minutes * 60;
   const formattedDate = [minutes, seconds].map((v) => (v < 10 ? `0${v}` : v)).join(':');
+  const isLongBreak = breaks % 4 === 0;
 
   useEffect(() => {
     if (isOwner) {
@@ -62,10 +61,15 @@ function Pomodoro({ session, isOwner }: PomodoroProps) {
     if (isOwner) {
       if (remainingTime <= 0) {
         const newState = state === 'session' ? 'break' : 'session';
+        let endTime = new Date().getTime() + (newState === 'session' ? sessionLength : breakLength) * 60 * 1000;
+        if (hasLongBreak && newState === 'break' && breaks !== 0 && (breaks + 1) % 4 === 0) {
+          endTime = new Date().getTime() + breakLength * 2 * 60 * 1000;
+        }
         editSession({
           state: newState,
           lastTime: new Date().getTime(),
-          endTime: new Date().getTime() + (newState === 'session' ? sessionLength : breakLength) * 60 * 1000,
+          endTime,
+          breaks: breaks + (newState === 'break' ? 1 : 0),
         });
       }
     }
@@ -109,6 +113,11 @@ function Pomodoro({ session, isOwner }: PomodoroProps) {
       ...getResetData(sessionLength),
     });
 
+  const toggleLongBreak = () =>
+    editSession({
+      hasLongBreak: !hasLongBreak,
+    });
+
   return (
     <Box
       style={{
@@ -121,7 +130,12 @@ function Pomodoro({ session, isOwner }: PomodoroProps) {
       </Center>
       <Center>
         <CircularProgress
-          value={(1 - remainingTime / ((state === 'session' ? sessionLength : breakLength) * 60)) * 100}
+          value={
+            (1 -
+              remainingTime /
+                ((state === 'session' ? sessionLength : hasLongBreak ? 2 * breakLength : breakLength) * 60)) *
+            100
+          }
           size="4em"
           color={state === 'session' ? 'cyan.400' : 'teal.400'}
         >
@@ -147,11 +161,15 @@ function Pomodoro({ session, isOwner }: PomodoroProps) {
         </Flex>
       </Center>
 
-      <Tooltip label="A long break session of 10 minutes. This will be activated every 4th break session.">
+      <Tooltip label="A long break session of x2 of break time. This will be activated every 4th break session.">
         <Center>
           <Flex direction="column">
-            <Text>Long break</Text>
-            <Switch />
+            <Center>
+              <Text>Long break</Text>
+            </Center>
+            <Center>
+              <Switch isDisabled={!isOwner} isChecked={hasLongBreak} onChange={toggleLongBreak} />
+            </Center>
           </Flex>
         </Center>
       </Tooltip>
