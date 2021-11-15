@@ -1,20 +1,19 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import { Center, Flex, IconButton, Spacer, Switch, Text, Tooltip, useClipboard, useToast } from '@chakra-ui/react';
 import { FaPause, FaPlay, FaShare } from 'react-icons/fa';
 import { RepeatClockIcon } from '@chakra-ui/icons';
 
-import { editSession, Session, SessionChanges } from '../db';
+import { editSession, SessionChanges } from '../db';
 import TimeInput from './TimeInput';
+import { SessionContext } from './SessionProvider';
 
-interface PomodoroControlsProps {
-  uid: string;
-  session: Session;
-  isOwner: boolean;
-}
-
-function PomodoroControls({ uid, session, isOwner }: PomodoroControlsProps) {
-  const { isPaused, sessionLength, breakLength, hasLongBreak, endTime, lastTime } = session;
+function PomodoroControls() {
+  const {
+    session: { isPaused, sessionLength, breakLength, hasLongBreak, endTime, lastTime },
+    uid,
+    isOwner,
+  } = useContext(SessionContext);
   const { onCopy, hasCopied } = useClipboard(`https://vite-pomodoro.firebaseapp.com/sessions/${uid}`);
   const toast = useToast();
 
@@ -75,7 +74,7 @@ function PomodoroControls({ uid, session, isOwner }: PomodoroControlsProps) {
     <>
       <Center my="2">
         <Flex>
-          <Tooltip label={isPaused ? 'Resume' : 'Paused'}>
+          <Tooltip label={isPaused ? 'Resume' : 'Pause'}>
             <IconButton
               aria-label="Pause/Resume"
               icon={isPaused ? <FaPlay /> : <FaPause />}

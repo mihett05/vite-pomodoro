@@ -3,7 +3,6 @@ import { User, signInAnonymously } from 'firebase/auth';
 
 import { auth } from '../firebase';
 import { createSession, setUserName, generateUserName } from '../db';
-import { set } from 'firebase/database';
 
 export const AuthContext = createContext<User | null>(null);
 

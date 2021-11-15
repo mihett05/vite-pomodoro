@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { onValue, query, ref, onDisconnect } from 'firebase/database';
-import { Center } from '@chakra-ui/react';
+import { Center, Heading } from '@chakra-ui/react';
 
 import { db, auth } from '../firebase';
 import { Session } from '../db';
 import Pomodoro from '../components/Pomodoro';
+import SessionProvider from '../components/SessionProvider';
 
 function SessionPage() {
   const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const { userId } = useParams();
 
   useEffect(() => {
@@ -40,7 +41,11 @@ function SessionPage() {
   }, [session]);
 
   if (isLoading) {
-    return <>Loading...</>;
+    return (
+      <Center h="90vh">
+        <Heading>Loading...</Heading>
+      </Center>
+    );
   }
 
   if (!userId || !session) {
@@ -50,12 +55,18 @@ function SessionPage() {
   const isOwner = auth.currentUser?.uid === userId;
 
   if (!isOwner && !session.isOnline) {
-    return <>Session is offline</>;
+    return (
+      <Center h="90vh">
+        <Heading>Session is offline</Heading>
+      </Center>
+    );
   }
 
   return (
     <Center h="90vh">
-      <Pomodoro session={session} isOwner={isOwner} uid={userId} />
+      <SessionProvider uid={userId} session={session} isOwner={isOwner}>
+        <Pomodoro />
+      </SessionProvider>
     </Center>
   );
 }

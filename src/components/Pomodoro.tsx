@@ -1,18 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Box, Center, CircularProgress, CircularProgressLabel, Heading } from '@chakra-ui/react';
-import { Session } from '../db';
+
 import PomodoroControls from './PomodoroControls';
 import usePomodoroTimer from '../hooks/usePomodoroTimer';
+import { SessionContext } from './SessionProvider';
 
-interface PomodoroProps {
-  uid: string;
-  session: Session;
-  isOwner: boolean;
-}
-
-function Pomodoro({ uid, session, isOwner }: PomodoroProps) {
-  const { state } = session;
-  const { date, progress } = usePomodoroTimer(session, isOwner);
+function Pomodoro() {
+  const {
+    session: { state },
+  } = useContext(SessionContext);
+  const { date, progress } = usePomodoroTimer();
 
   return (
     <Box
@@ -31,7 +28,7 @@ function Pomodoro({ uid, session, isOwner }: PomodoroProps) {
           </CircularProgressLabel>
         </CircularProgress>
       </Center>
-      <PomodoroControls uid={uid} session={session} isOwner={isOwner} />
+      <PomodoroControls />
     </Box>
   );
 }

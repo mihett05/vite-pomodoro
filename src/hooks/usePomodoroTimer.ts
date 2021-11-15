@@ -1,8 +1,15 @@
-import { useState, useEffect } from 'react';
-import { editSession, Session } from '../db';
+import { useState, useEffect, useContext } from 'react';
+import { editSession } from '../db';
 
-function usePomodoroTimer(session: Session, isOwner: boolean) {
-  const { lastTime, endTime, breaks, isPaused, hasLongBreak, state, sessionLength, breakLength } = session;
+import sessionStart from '../sounds/sessionStart.mp3';
+import sessionEnd from '../sounds/sessionEnd.mp3';
+import { SessionContext } from '../components/SessionProvider';
+
+function usePomodoroTimer() {
+  const {
+    session: { lastTime, endTime, breaks, isPaused, hasLongBreak, state, sessionLength, breakLength },
+    isOwner,
+  } = useContext(SessionContext);
   const [clientLastTime, setClientLastTime] = useState(lastTime);
 
   const remainingTime = Math.floor((endTime - clientLastTime) / 1000);
@@ -44,6 +51,11 @@ function usePomodoroTimer(session: Session, isOwner: boolean) {
     if (isOwner) {
       if (remainingTime <= 0) {
         const newState = state === 'session' ? 'break' : 'session';
+
+        const audio = new Audio(newState === 'session' ? sessionStart : sessionEnd);
+        audio.volume = 0.5;
+        audio.play();
+
         let endTime = new Date().getTime() + (newState === 'session' ? sessionLength : breakLength) * 60 * 1000;
         if (hasLongBreak && newState === 'break' && breaks !== 0 && (breaks + 1) % 4 === 0) {
           endTime = new Date().getTime() + breakLength * 2 * 60 * 1000;
