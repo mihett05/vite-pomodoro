@@ -12,7 +12,7 @@ function EditableButton() {
 }
 
 function NameEditable() {
-  const [name, setName] = useState('Name');
+  const [name, setName] = useState('');
 
   useEffect(() => {
     return onValue(query(ref(db, `users/${auth.currentUser?.uid}`)), async (data) => {

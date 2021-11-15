@@ -11,20 +11,25 @@ import {
   Tooltip,
   Switch,
   Text,
+  useClipboard,
+  useToast,
 } from '@chakra-ui/react';
 import { RepeatClockIcon } from '@chakra-ui/icons';
-import { FaPause, FaPlay } from 'react-icons/fa';
+import { FaPause, FaPlay, FaShare } from 'react-icons/fa';
 import { Session, editSession, SessionChanges } from '../db';
 import TimeInput from './TimeInput';
 
 interface PomodoroProps {
+  uid: string;
   session: Session;
   isOwner: boolean;
 }
 
-function Pomodoro({ session, isOwner }: PomodoroProps) {
+function Pomodoro({ uid, session, isOwner }: PomodoroProps) {
   const { isPaused, lastTime, endTime, state, sessionLength, breakLength, hasLongBreak, breaks } = session;
   const [clientLastTime, setClientLastTime] = useState(lastTime);
+  const { onCopy, hasCopied } = useClipboard(`https://vite-pomodoro.firebaseapp.com/sessions/${uid}`);
+  const toast = useToast();
 
   const remainingTime = Math.floor((endTime - clientLastTime) / 1000);
   const minutes = Math.floor(remainingTime / 60);
@@ -83,23 +88,33 @@ function Pomodoro({ session, isOwner }: PomodoroProps) {
   });
 
   const onTogglePause = () => {
-    if (isOwner) {
-      if (isPaused) {
-        return editSession({
-          isPaused: false,
-          endTime: endTime + (new Date().getTime() - lastTime), // adding the time of the pause to the end time
-          lastTime: new Date().getTime(),
-        });
-      } else {
-        return editSession({
-          isPaused: true,
-          lastTime: new Date().getTime(),
-        });
-      }
+    if (isPaused) {
+      return editSession({
+        isPaused: false,
+        endTime: endTime + (new Date().getTime() - lastTime), // adding the time of the pause to the end time
+        lastTime: new Date().getTime(),
+      });
+    } else {
+      return editSession({
+        isPaused: true,
+        lastTime: new Date().getTime(),
+      });
     }
   };
 
   const onReset = () => editSession(getResetData(sessionLength));
+  const onShare = () => {
+    onCopy();
+    if (!hasCopied) {
+      toast({
+        title: 'Sessions link was copied',
+        description: 'Now you can share this link with someone',
+        status: 'info',
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+  };
 
   const onEditSessionLength = (value: number) =>
     editSession({
@@ -156,7 +171,10 @@ function Pomodoro({ session, isOwner }: PomodoroProps) {
             />
           </Tooltip>
           <Tooltip label="Reset">
-            <IconButton aria-label="Reset" icon={<RepeatClockIcon />} onClick={onReset} isDisabled={!isOwner} />
+            <IconButton aria-label="Reset" icon={<RepeatClockIcon />} onClick={onReset} isDisabled={!isOwner} mr="4" />
+          </Tooltip>
+          <Tooltip label="Share session's link">
+            <IconButton aria-label="Share" icon={<FaShare />} onClick={onShare} isDisabled={hasCopied} />
           </Tooltip>
         </Flex>
       </Center>

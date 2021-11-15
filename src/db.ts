@@ -22,9 +22,9 @@ export type SessionChanges = {
   [k in keyof Session]?: Session[k];
 };
 
-export const setUserName = async (name: string) => {
-  if (auth.currentUser) {
-    const nameRef = ref(db, `users/${auth.currentUser.uid}`);
+export const setUserName = async (name: string, uid = auth.currentUser?.uid || '') => {
+  if (auth.currentUser || uid) {
+    const nameRef = ref(db, `users/${uid}`);
     await set(nameRef, name);
   }
 };

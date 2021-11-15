@@ -40,7 +40,7 @@ function SessionPage() {
   }, [session]);
 
   if (isLoading) {
-    return <>Loading</>;
+    return <>Loading...</>;
   }
 
   if (!userId || !session) {
@@ -49,9 +49,13 @@ function SessionPage() {
 
   const isOwner = auth.currentUser?.uid === userId;
 
+  if (!isOwner && !session.isOnline) {
+    return <>Session is offline</>;
+  }
+
   return (
     <Center h="90vh">
-      <Pomodoro session={session} isOwner={isOwner} />
+      <Pomodoro session={session} isOwner={isOwner} uid={userId} />
     </Center>
   );
 }
