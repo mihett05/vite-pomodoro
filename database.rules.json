@@ -6,13 +6,40 @@
       ".read": true,
       "$user": {
         ".write": "$user === auth.uid",
-        ".validate": "newData.isString() && newData.val().length < 32"
+        ".validate": "newData.isString() && newData.val().length < 32",
       }
     },
     "sessions": {
       ".read": true,
       "$session": {
-        ".write": "$session === auth.uid"
+        ".write": "$session === auth.uid",
+        "sessionLength": {
+          ".validate": "newData.isNumber()"
+        },
+        "breakLength": {
+          ".validate": "newData.isNumber()"
+        },
+        "hasLongBreak": {
+          ".validate": "newData.isBoolean()"
+        },
+        "isPaused": {
+          ".validate": "newData.isBoolean()"
+        },
+        "isOnline": {
+          ".validate": "newData.isBoolean()"
+        },
+        "state": {
+          ".validate": "newData.val() === 'session' || newData.val() === 'break'"
+        },
+        "lastTime": {
+          ".validate": "newData.isNumber()"
+        },
+        "endTime": {
+          ".validate": "newData.isNumber()"
+        },
+        "breaks": {
+          ".validate": "newData.isNumber()"
+        }
       }
     }
   }

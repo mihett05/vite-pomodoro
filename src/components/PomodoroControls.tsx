@@ -7,34 +7,37 @@ import { RepeatClockIcon } from '@chakra-ui/icons';
 import { editSession, SessionChanges } from '../db';
 import TimeInput from './TimeInput';
 import { SessionContext } from './SessionProvider';
+import useGetTime from '../hooks/useGetTime';
 
 function PomodoroControls() {
   const {
-    session: { isPaused, sessionLength, breakLength, hasLongBreak, endTime, lastTime },
+    session: { isPaused, sessionLength, breakLength, hasLongBreak, endTime, lastTime, breaks },
     uid,
     isOwner,
   } = useContext(SessionContext);
+  const getTime = useGetTime();
   const { onCopy, hasCopied } = useClipboard(`https://vite-pomodoro.firebaseapp.com/sessions/${uid}`);
   const toast = useToast();
 
   const getResetData = (endLength: number): SessionChanges => ({
     isPaused: true,
-    lastTime: new Date().getTime(),
-    endTime: new Date().getTime() + endLength * 60 * 1000,
+    lastTime: getTime(),
+    endTime: getTime() + endLength * 60 * 1000,
     state: 'session',
+    breaks: 0,
   });
 
   const onTogglePause = () => {
     if (isPaused) {
       return editSession({
         isPaused: false,
-        endTime: endTime + (new Date().getTime() - lastTime), // adding the time of the pause to the end time
-        lastTime: new Date().getTime(),
+        endTime: endTime + (getTime() - lastTime), // adding the time of the pause to the end time
+        lastTime: getTime(),
       });
     } else {
       return editSession({
         isPaused: true,
-        lastTime: new Date().getTime(),
+        lastTime: getTime(),
       });
     }
   };

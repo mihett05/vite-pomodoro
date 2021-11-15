@@ -1,9 +1,10 @@
 import { useState, useEffect, useContext } from 'react';
 import { editSession } from '../db';
 
-import sessionStart from '../sounds/sessionStart.mp3';
-import sessionEnd from '../sounds/sessionEnd.mp3';
+import sessionStart from '../../assets/sounds/sessionStart.mp3';
+import sessionEnd from '../../assets/sounds/sessionEnd.mp3';
 import { SessionContext } from '../components/SessionProvider';
+import useGetTime from './useGetTime';
 
 function usePomodoroTimer() {
   const {
@@ -11,6 +12,7 @@ function usePomodoroTimer() {
     isOwner,
   } = useContext(SessionContext);
   const [clientLastTime, setClientLastTime] = useState(lastTime);
+  const getTime = useGetTime();
 
   const remainingTime = Math.floor((endTime - clientLastTime) / 1000);
   const minutes = Math.floor(remainingTime / 60);
@@ -41,7 +43,7 @@ function usePomodoroTimer() {
     setClientLastTime(lastTime);
     if (!isPaused) {
       const interval = setInterval(() => {
-        setClientLastTime(new Date().getTime());
+        setClientLastTime(getTime());
       }, 1000);
       return () => clearInterval(interval);
     }
@@ -56,13 +58,13 @@ function usePomodoroTimer() {
         audio.volume = 0.5;
         audio.play();
 
-        let endTime = new Date().getTime() + (newState === 'session' ? sessionLength : breakLength) * 60 * 1000;
+        let endTime = getTime() + (newState === 'session' ? sessionLength : breakLength) * 60 * 1000;
         if (hasLongBreak && newState === 'break' && breaks !== 0 && (breaks + 1) % 4 === 0) {
-          endTime = new Date().getTime() + breakLength * 2 * 60 * 1000;
+          endTime = getTime() + breakLength * 2 * 60 * 1000;
         }
         editSession({
           state: newState,
-          lastTime: new Date().getTime(),
+          lastTime: getTime() + 1000,
           endTime,
           breaks: breaks + (newState === 'break' ? 1 : 0),
         });
