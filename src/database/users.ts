@@ -5,6 +5,8 @@ import { adjectives, colors, starWars, uniqueNamesGenerator } from 'unique-names
 export type UserId = string;
 export type Users = Record<string, string>;
 
+export const getUserRef = () => ref(db, `users/${auth.currentUser?.uid}`);
+
 export const setUserName = async (name: string, uid = auth.currentUser?.uid || '') => {
   if (auth.currentUser || uid) {
     const nameRef = ref(db, `users/${uid}`);

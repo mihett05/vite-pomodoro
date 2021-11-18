@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { onValue, query, ref } from 'firebase/database';
+import { onValue } from 'firebase/database';
 import { Editable, EditableInput, EditablePreview, useEditableControls } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
-import { auth, db } from '../firebase';
-import { generateUserName, setUserName } from '../database/users';
+import { generateUserName, getUserRef, setUserName } from '../database/users';
 
 function EditableButton() {
   const { isEditing, getEditButtonProps } = useEditableControls();
@@ -15,7 +14,7 @@ function NameEditable() {
   const [name, setName] = useState('');
 
   useEffect(() => {
-    return onValue(query(ref(db, `users/${auth.currentUser?.uid}`)), async (data) => {
+    return onValue(getUserRef(), async (data) => {
       const newName = data.val();
       if (!newName.trim()) {
         await setUserName(generateUserName());

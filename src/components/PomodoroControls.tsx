@@ -31,7 +31,7 @@ function PomodoroControls() {
     if (isPaused) {
       return editSession({
         isPaused: false,
-        endTime: endTime + (getTime() - lastTime), // adding the time of the pause to the end time
+        endTime: endTime + (getTime() - lastTime) - 500, // adding the time of the pause to the end time
         lastTime: getTime(),
       });
     } else {

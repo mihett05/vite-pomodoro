@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { child, onChildAdded, onChildRemoved, onDisconnect } from 'firebase/database';
-import { toast, useToast } from '@chakra-ui/react';
+import { useToast } from '@chakra-ui/react';
 
 import { getRoomRef, joinRoom, leaveRoom } from '../database/rooms';
 import { SessionContext } from '../contexts/SessionProvider';

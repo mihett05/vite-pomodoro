@@ -1,9 +1,12 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Center, Heading, SimpleGrid } from '@chakra-ui/react';
 import { onValue, ref } from 'firebase/database';
-import { db } from '../firebase';
+import { Link as RouterLink } from 'react-router-dom';
+import { Center, Heading, Link, SimpleGrid } from '@chakra-ui/react';
+
+import { auth, db } from '../firebase';
 import { Sessions } from '../database/sessions';
 import { UsersContext } from '../contexts/UsersProvider';
+
 import SessionCard from '../components/SessionCard';
 
 function HomePage() {
@@ -13,7 +16,7 @@ function HomePage() {
   const activeSessions = useMemo(
     () =>
       Object.keys(sessions)
-        .filter((uid) => sessions[uid].isOnline)
+        .filter((uid) => sessions[uid].isOnline && uid !== auth.currentUser?.uid)
         .sort((a, b) => {
           const sessionA = sessions[a].endTime;
           const sessionB = sessions[b].endTime;
@@ -33,7 +36,17 @@ function HomePage() {
   return (
     <>
       <Center>
-        <Heading mb="5">Users pomodoro sessions</Heading>
+        <Heading mb="5" textAlign="center">
+          Users pomodoro sessions
+        </Heading>
+      </Center>
+      <Center h="70vh">
+        <Heading fontSize="2xl" textAlign="center">
+          There are no active sessions,{' '}
+          <Link as={RouterLink} color="teal.500" to={`/sessions/${auth.currentUser?.uid}`}>
+            create one
+          </Link>
+        </Heading>
       </Center>
       <SimpleGrid minChildWidth="300px" spacing={5}>
         {activeSessions.map((uid) => (
