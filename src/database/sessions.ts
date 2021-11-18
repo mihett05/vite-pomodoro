@@ -1,6 +1,6 @@
 import { ref, set, update } from 'firebase/database';
-import { db, auth } from './firebase';
-import { adjectives, colors, starWars, uniqueNamesGenerator } from 'unique-names-generator';
+import { db, auth } from '../firebase';
+import { UserId } from './users';
 
 export interface Session {
   sessionLength: number;
@@ -14,33 +14,17 @@ export interface Session {
   breaks: number;
 }
 
-export type Sessions = Record<string, Session>;
-
-export type Users = Record<string, string>;
+export type Sessions = Record<UserId, Session>;
 
 export type SessionChanges = {
   [k in keyof Session]?: Session[k];
 };
 
-export const setUserName = async (name: string, uid = auth.currentUser?.uid || '') => {
-  if (auth.currentUser || uid) {
-    const nameRef = ref(db, `users/${uid}`);
-    await set(nameRef, name);
-  }
-};
-
-export const generateUserName = (): string => {
-  return uniqueNamesGenerator({
-    dictionaries: [adjectives, colors, starWars],
-    length: 2,
-    separator: ' ',
-    style: 'capital',
-  });
-};
+export const getSessionRef = (ownerId: UserId) => ref(db, `sessions/${ownerId}`);
 
 export const createSession = async () => {
   if (auth.currentUser) {
-    const sessionRef = ref(db, `sessions/${auth.currentUser.uid}`);
+    const sessionRef = getSessionRef(auth.currentUser.uid);
     await set(sessionRef, {
       sessionLength: 25,
       breakLength: 5,
@@ -57,7 +41,7 @@ export const createSession = async () => {
 
 export const editSession = async (changes: SessionChanges) => {
   if (auth.currentUser) {
-    const sessionRef = ref(db, `sessions/${auth.currentUser.uid}`);
+    const sessionRef = getSessionRef(auth.currentUser.uid);
     await update(sessionRef, changes);
   }
 };

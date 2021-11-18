@@ -4,9 +4,9 @@ import { Center, Flex, IconButton, Spacer, Switch, Text, Tooltip, useClipboard, 
 import { FaPause, FaPlay, FaShare } from 'react-icons/fa';
 import { RepeatClockIcon } from '@chakra-ui/icons';
 
-import { editSession, SessionChanges } from '../db';
+import { editSession, SessionChanges } from '../database/sessions';
 import TimeInput from './TimeInput';
-import { SessionContext } from './SessionProvider';
+import { SessionContext } from '../contexts/SessionProvider';
 import useGetTime from '../hooks/useGetTime';
 
 function PomodoroControls() {

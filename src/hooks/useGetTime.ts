@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { OffsetContext } from '../components/OffsetProvider';
+import { OffsetContext } from '../contexts/OffsetProvider';
 
 function useGetTime(): () => number {
   const offset = useContext(OffsetContext);

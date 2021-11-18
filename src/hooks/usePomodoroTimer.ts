@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from 'react';
-import { editSession } from '../db';
+import { editSession } from '../database/sessions';
 
 import sessionStart from '../../assets/sounds/sessionStart.mp3';
 import sessionEnd from '../../assets/sounds/sessionEnd.mp3';
-import { SessionContext } from '../components/SessionProvider';
+import { SessionContext } from '../contexts/SessionProvider';
 import useGetTime from './useGetTime';
 
 function usePomodoroTimer() {

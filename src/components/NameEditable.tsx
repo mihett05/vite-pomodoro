@@ -3,7 +3,7 @@ import { onValue, query, ref } from 'firebase/database';
 import { Editable, EditableInput, EditablePreview, useEditableControls } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import { auth, db } from '../firebase';
-import { generateUserName, setUserName } from '../db';
+import { generateUserName, setUserName } from '../database/users';
 
 function EditableButton() {
   const { isEditing, getEditButtonProps } = useEditableControls();

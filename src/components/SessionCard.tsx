@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Box, Button, Center, Flex, Heading, Spacer, Tag, Text } from '@chakra-ui/react';
-import { Session } from '../db';
+import { Session } from '../database/sessions';
 
 interface SessionCardProps {
   uid: string;

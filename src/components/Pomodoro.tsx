@@ -3,7 +3,7 @@ import { Box, Center, CircularProgress, CircularProgressLabel, Heading } from '@
 
 import PomodoroControls from './PomodoroControls';
 import usePomodoroTimer from '../hooks/usePomodoroTimer';
-import { SessionContext } from './SessionProvider';
+import { SessionContext } from '../contexts/SessionProvider';
 
 function Pomodoro() {
   const {

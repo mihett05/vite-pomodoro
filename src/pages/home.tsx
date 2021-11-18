@@ -1,13 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Center, Heading, SimpleGrid } from '@chakra-ui/react';
-import { onValue, query, ref } from 'firebase/database';
+import { onValue, ref } from 'firebase/database';
 import { db } from '../firebase';
-import { Sessions, Users } from '../db';
+import { Sessions } from '../database/sessions';
+import { UsersContext } from '../contexts/UsersProvider';
 import SessionCard from '../components/SessionCard';
 
 function HomePage() {
   const [sessions, setSessions] = useState<Sessions>({});
-  const [users, setUsers] = useState<Users>({});
+  const users = useContext(UsersContext);
 
   const activeSessions = useMemo(
     () =>
@@ -24,16 +25,10 @@ function HomePage() {
   );
 
   useEffect(() => {
-    return onValue(query(ref(db, `sessions`)), (data) => {
+    return onValue(ref(db, `sessions`), (data) => {
       setSessions(data.val());
     });
   }, [setSessions]);
-
-  useEffect(() => {
-    return onValue(query(ref(db, `users`)), (data) => {
-      setUsers(data.val());
-    });
-  }, [setUsers]);
 
   return (
     <>

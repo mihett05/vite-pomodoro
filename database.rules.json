@@ -6,7 +6,7 @@
       ".read": true,
       "$user": {
         ".write": "$user === auth.uid",
-        ".validate": "newData.isString() && newData.val().length < 32",
+        ".validate": "newData.isString() && newData.val().length < 32"
       }
     },
     "sessions": {
@@ -39,6 +39,15 @@
         },
         "breaks": {
           ".validate": "newData.isNumber()"
+        }
+      }
+    },
+    "rooms": {
+      ".read": true,
+      "$room": {
+        "$member": {
+          ".write": "$member === auth.uid",
+          ".validate": "newData.val() === true"
         }
       }
     }

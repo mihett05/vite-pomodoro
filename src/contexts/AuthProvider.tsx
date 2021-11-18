@@ -2,7 +2,8 @@ import React, { createContext, useEffect, useState } from 'react';
 import { User, signInAnonymously } from 'firebase/auth';
 
 import { auth } from '../firebase';
-import { createSession, setUserName, generateUserName } from '../db';
+import { createSession } from '../database/sessions';
+import { setUserName, generateUserName } from '../database/users';
 
 export const AuthContext = createContext<User | null>(null);
 
