@@ -60,7 +60,7 @@ function Room({ children }: RoomProps) {
           onJoin(name);
         }
       }),
-    [uid],
+    [uid, users],
   );
   useEffect(
     () =>
@@ -71,7 +71,7 @@ function Room({ children }: RoomProps) {
           onLeave(name);
         }
       }),
-    [uid],
+    [uid, users],
   );
 
   return <>{children}</>;
