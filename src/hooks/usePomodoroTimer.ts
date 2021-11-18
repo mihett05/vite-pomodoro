@@ -43,7 +43,7 @@ function usePomodoroTimer() {
     setClientLastTime(lastTime);
     if (!isPaused) {
       const interval = setInterval(() => {
-        setClientLastTime(getTime());
+        setClientLastTime(getTime() - 1000);
       }, 1000);
       return () => clearInterval(interval);
     }

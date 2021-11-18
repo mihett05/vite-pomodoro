@@ -40,19 +40,22 @@ function HomePage() {
           Users pomodoro sessions
         </Heading>
       </Center>
-      <Center h="70vh">
-        <Heading fontSize="2xl" textAlign="center">
-          There are no active sessions,{' '}
-          <Link as={RouterLink} color="teal.500" to={`/sessions/${auth.currentUser?.uid}`}>
-            create one
-          </Link>
-        </Heading>
-      </Center>
-      <SimpleGrid minChildWidth="300px" spacing={5}>
-        {activeSessions.map((uid) => (
-          <SessionCard uid={uid} name={users[uid]} session={sessions[uid]} />
-        ))}
-      </SimpleGrid>
+      {activeSessions.length === 0 ? (
+        <Center h="70vh">
+          <Heading fontSize="2xl" textAlign="center">
+            There are no active sessions,{' '}
+            <Link as={RouterLink} color="teal.500" to={`/sessions/${auth.currentUser?.uid}`}>
+              create one
+            </Link>
+          </Heading>
+        </Center>
+      ) : (
+        <SimpleGrid minChildWidth="300px" spacing={5}>
+          {activeSessions.map((uid) => (
+            <SessionCard uid={uid} name={users[uid]} session={sessions[uid]} />
+          ))}
+        </SimpleGrid>
+      )}
     </>
   );
 }
